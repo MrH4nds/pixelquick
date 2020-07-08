@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pixel Quick!</title>
+        <meta name="notes" content="sort of ghetto version: scroll down and edit image name in body to select desired image, then open and view, click/shift+click to zoom in/out. I was going to apologise to for some slight plagarism, although then i rewrote it a bit to exclude jQuery! so now i feel like i can include the following...">
+            <meta name="license" content="Copyright (c) 2020 hANshOTtH3RD
+                Copying and distribution of this file, with or without modification,
+                are permitted in any medium without royalty provided the copyright
+                notice and this notice are preserved(or not).  This file is offered as-is,
+                without any warranty.">
+        <meta name="one-request"   content="...And can some good person please find doctor to fix my poor finger!">
+        <style>
+            * {
+                image-rendering: optimizeSpeed; /* Legal fallback                 */
+                image-rendering: -moz-crisp-edges; /* Firefox                        */
+                image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+                image-rendering: pixelated; /* CSS3                           */
+                -ms-interpolation-mode: nearest-neighbor; /* IE8+                           */
+            }
+        </style>
+        <script>
+            var toggle = 0;
+            function scaleFunction() {
+                var tog = toggle;
+                var scl = document.getElementById("scale").getAttribute("scale");
+                var wi = document.getElementById("timg").naturalWidth;
+                var hi = document.getElementById("timg").naturalHeight;
+                if(tog == 0){
+                    scl++;
+                    document.getElementById("scale").setAttribute("scale", scl);
+                    document.getElementById("scale").innerHTML = "Scale: " + scl + "x";
+                    document.getElementById("timg").setAttribute("width", wi*scl);
+                    document.getElementById("timg").setAttribute("height", hi*scl);
+                } else if (scl > 1){
+                    scl--;
+                    document.getElementById("scale").setAttribute("scale", scl);
+                    document.getElementById("scale").innerHTML = "Scale: " + scl + "x";
+                    document.getElementById("timg").setAttribute("width", wi*scl);
+                    document.getElementById("timg").setAttribute("height", hi*scl);
+                }
+            }
+            function mkeydown(event) {
+                var x = event.which || event.keyCode;
+                document.getElementById("keycode").innerHTML = "keypress Unicode#: " + x;
+                if ( x == 16 ){
+                    toggle = 1;
+                }
+            }
+            function mkeyup(event) {
+                var x = event.which || event.keyCode;
+                document.getElementById("keycode").innerHTML = "";
+                if ( x == 16 ){
+                    toggle = 0;
+                }
+            }
+            //var ldtog = 1;
+            var ldtog = localStorage['pixelquick-light-dark-toggle'] || '1';
+            function togglelightdark(){
+                if (ldtog == 0){
+                    ldtog = 1;
+                    localStorage['pixelquick-light-dark-toggle'] = '1';
+                    document.body.style.backgroundColor = '#ffffff';
+                    document.body.style.color = '#000000';
+                } else {
+                    ldtog = 0;
+                    localStorage['pixelquick-light-dark-toggle'] = '0';
+                    document.body.style.backgroundColor = '#000000';
+                    document.body.style.color = '#ffffff';
+                }
+            }
+            function initpage(){
+                ldtog = (-1)*ldtog+1;
+                togglelightdark();
+            }
+        
+        </script>
+    </head>
+    <body onload="initpage()" onkeydown="mkeydown(event)" onkeyup="mkeyup(event)">
+        <input type="file" id="fselect" accept="image/*" />
+        <button id="lidatog" onclick="togglelightdark()">toggle light/dark</button><br />
+        <img id="timg" src="mytestimage.gif" /><br />
+        <p id="scale" scale="1">Scale: 1x</p>
+        <p id="keycode"></p>
+    </body>
+    <script>
+        document.getElementById("timg").addEventListener("click", scaleFunction);
+        
+        const reader = new FileReader();
+        const fileInput = document.getElementById("fselect");
+        const img = document.getElementById("timg");
+        reader.onload = e => {
+            img.src = e.target.result;
+        }
+        fileInput.addEventListener('change', e => {
+                                   const f = e.target.files[0];
+                                   reader.readAsDataURL(f);
+                               })
+    </script>
+</html>
